@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+#define MAX_USERS 100
+#define MAX_NAME_LENGTH 50
+
+// Structure to represent a user
+typedef struct {
+    char name[MAX_NAME_LENGTH];
+    int fingerprintID;
+} User;
+
+// Function to register a new user
+void registerUser(User users[], int *numUsers) {
+    if (*numUsers >= MAX_USERS) {
+        printf("Maximum number of users reached\n");
+        return;
+    }
+    printf("Enter user name: ");
+    scanf("%s", users[*numUsers].name);
+    printf("Enter fingerprint ID: ");
+    scanf("%d", &users[*numUsers].fingerprintID);
+    (*numUsers)++;
+    printf("User registered successfully\n");
+}
+
+// Function to record attendance
+void recordAttendance(User users[], int numUsers) {
+    int fingerprintID;
+    printf("Place your finger on the scanner: ");
+    scanf("%d", &fingerprintID);
+    
+    // Search for the user with matching fingerprint ID
+    int i;
+    for (i = 0; i < numUsers; i++) {
+        if (users[i].fingerprintID == fingerprintID) {
+            printf("Welcome, %s!\n", users[i].name);
+            // Get current date and time
+            time_t currentTime = time(NULL);
+            struct tm *localTime = localtime(&currentTime);
+            printf("Attendance recorded at %s", asctime(localTime));
+            // Here, you can write the attendance record to an Excel file
+            return;
+        }
+    }
+    printf("Fingerprint not recognized\n");
+}
+
+int main() {
+    User users[MAX_USERS];
+    int numUsers = 0;
+    int choice;
+
+    do {
+        printf("\nMenu:\n");
+        printf("1. Register new user\n");
+        printf("2. Record attendance\n");
+        printf("3. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                registerUser(users, &numUsers);
+                break;
+            case 2:
+                recordAttendance(users, numUsers);
+                break;
+            case 3:
+                printf("Exiting program\n");
+                break;
+            default:
+                printf("Invalid choice\n");
+        }
+    } while (choice != 3);
+
+    return 0;
+}
